@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DraggableControl", "WpfApp1\DraggableControl.csproj", "{874ED948-BC76-43A3-B173-71B74DA33264}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DraggableControl", "DraggableControl\DraggableControl.csproj", "{874ED948-BC76-43A3-B173-71B74DA33264}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
