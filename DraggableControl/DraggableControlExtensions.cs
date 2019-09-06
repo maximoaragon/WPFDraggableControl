@@ -111,18 +111,20 @@ namespace WpfApp1
             ctr.ContextMenu = cm;
         }
 
-        private static void StartEditMode(Control ctr)
+        private static void StartEditMode(Control ctrl)
         {
-            var parentElement = ctr.Parent as FrameworkElement;
+            var parentElement = ctrl.Parent as FrameworkElement;
 
-            string controlXML = XamlWriter.Save(ctr);
+            string controlXML = XamlWriter.Save(ctrl);
 
-            ctr.SetValue(UIConfig.OriginalControlProperty, controlXML);
+            ctrl.SetValue(UIConfig.OriginalControlProperty, controlXML);
 
             //attach mouse move events
-            ctr.PreviewMouseUp += btn_MouseUp;
-            ctr.PreviewMouseLeftButtonDown += btn_MouseLeftButtonUp;
-            ctr.PreviewMouseMove += btn_MouseMove;
+            ctrl.PreviewMouseUp += ctrl_MouseUp;
+            ctrl.PreviewMouseLeftButtonDown += ctrl_MouseLeftButtonUp;
+            ctrl.PreviewMouseMove += ctrl_MouseMove;
+
+            ctrl.Cursor = Cursors.SizeAll;
 
             if (!parentElement.AllowDrop)
             {
@@ -133,161 +135,168 @@ namespace WpfApp1
 
                 if (parentElement is ContentControl)
                 {
-                    //buttons will be either in a ContentControl
+                    //control will be either in a ContentControl
                     ((ContentControl)parentElement).Content = null;
 
-                    g.Children.Add(ctr);
+                    g.Children.Add(ctrl);
 
                     ((ContentControl)parentElement).Content = g;
                 }
                 else if (parentElement is Panel)
                 {
                     //or a Panel
-                    ((Panel)parentElement).Children.Remove(ctr);
+                    ((Panel)parentElement).Children.Remove(ctrl);
 
-                    g.Children.Add(ctr);
+                    g.Children.Add(ctrl);
 
                     ((Panel)parentElement).Children.Add(g);
                 }
             }
 
             //the button should always be visible so it can be edited
-            ctr.Visibility = Visibility.Visible;
+            ctrl.Visibility = Visibility.Visible;
 
             //set a style for edit mode
-            ctr.BorderBrush = Brushes.Brown;
-            ctr.BorderThickness = new Thickness(3);
+            ctrl.BorderBrush = Brushes.Green;
+            ctrl.BorderThickness = new Thickness(3);
 
-            BuildContextMenu(ctr);
+            BuildContextMenu(ctrl);
 
             //and set the visibility style
-            var configVisible = (bool)ctr.GetValue(UIConfig.VisibleProperty);
+            var configVisible = (bool)ctrl.GetValue(UIConfig.VisibleProperty);
 
             if (!configVisible)
             {
                 //invisible edit mode style
-                ctr.Foreground = Brushes.LightGray;
-                ctr.Background = Brushes.WhiteSmoke;
+                ctrl.BorderBrush = Brushes.Brown;
+                //ctrl.Foreground = Brushes.LightGray;
+                //ctrl.Background = Brushes.WhiteSmoke;
             }
         }
 
-        private static void StopEditMode(Control ctr)
+        private static void StopEditMode(Control ctrl)
         {
-            var controlXAML = ctr.GetValue(UIConfig.OriginalControlProperty) as String;
+            var controlXAML = ctrl.GetValue(UIConfig.OriginalControlProperty) as String;
 
             if (controlXAML == null) return;
 
-            Control originalButton = XamlReader.Parse(controlXAML) as Control;
+            Control originalControl = XamlReader.Parse(controlXAML) as Control;
 
             //we could remove the grid added above
 
             //roll-back edit-mode styles
-            ctr.BorderBrush = originalButton.BorderBrush;
-            ctr.BorderThickness = originalButton.BorderThickness;
-            ctr.Foreground = originalButton.Foreground;
-            ctr.Background = originalButton.Background;
+            ctrl.BorderBrush = originalControl.BorderBrush;
+            ctrl.BorderThickness = originalControl.BorderThickness;
+            ctrl.Foreground = originalControl.Foreground;
+            ctrl.Background = originalControl.Background;
 
-            ctr.ContextMenu = null;
+            ctrl.Cursor = Cursors.Arrow;
 
-            ctr.PreviewMouseUp -= btn_MouseUp;
-            ctr.PreviewMouseLeftButtonDown -= btn_MouseLeftButtonUp;
-            ctr.PreviewMouseMove -= btn_MouseMove;
+            ctrl.ContextMenu = null;
 
-            var configVisible = (bool)ctr.GetValue(UIConfig.VisibleProperty);
+            ctrl.PreviewMouseUp -= ctrl_MouseUp;
+            ctrl.PreviewMouseLeftButtonDown -= ctrl_MouseLeftButtonUp;
+            ctrl.PreviewMouseMove -= ctrl_MouseMove;
 
-            ctr.SetValue(UIConfig.ParentMarginProperty, ctr.GetParentMargin().ToString());
+            var configVisible = (bool)ctrl.GetValue(UIConfig.VisibleProperty);
+
+            ctrl.SetValue(UIConfig.ParentMarginProperty, ctrl.GetParentMargin().ToString());
 
             if (!configVisible)
             {
                 //make invisible
-                ctr.Visibility = Visibility.Hidden;
+                ctrl.Visibility = Visibility.Hidden;
             }
         }
 
-        private static void SetVisibilityStyle(Control btn, bool visible)
+        private static void SetVisibilityStyle(Control ctrl, bool visible)
         {
+            //var parentElement = ctrl.Parent as FrameworkElement;
+
             if (!visible)
             {
                 //invisible style
-                btn.Foreground = Brushes.LightGray;
-                btn.Background = Brushes.WhiteSmoke;
+                //ctrl.Foreground = Brushes.LightGray;
+                //ctrl.Background = Brushes.WhiteSmoke;
+
+                ctrl.BorderBrush = Brushes.Brown;
             }
             else
             {
-                var buttonXAML = btn.GetValue(UIConfig.OriginalControlProperty) as String;
-                Button originalButton = XamlReader.Parse(buttonXAML) as Button;
+                var controlXAML = ctrl.GetValue(UIConfig.OriginalControlProperty) as string;
+                Control originalControl = XamlReader.Parse(controlXAML) as Control;
 
                 //original style
 
-                btn.Foreground = originalButton.Foreground;
-                btn.Background = originalButton.Background;
+                //ctrl.Foreground = originalControl.Foreground;
+                //ctrl.Background = originalControl.Background;
+                ctrl.BorderBrush = Brushes.Green;
+             
             }
         }
 
-        private static void btn_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private static void ctrl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            var btn = sender as Button;
+            var ctrl = sender as Control;
 
-            var mainWIndow = Window.GetWindow(btn);
+            var mainWIndow = Window.GetWindow(ctrl);
 
             // Get the Position of Window so that it will set margin from this window
             _mouseX = e.GetPosition(mainWIndow).X;
             _mouseY = e.GetPosition(mainWIndow).Y;
         }
 
-        private static void btn_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private static void ctrl_MouseUp(object sender, MouseButtonEventArgs e)
         {
             e.MouseDevice.Capture(null);
         }
 
-        private static void btn_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private static void ctrl_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                var btn = sender as Button;
+                var ctrl = sender as Control;
 
                 // Capture the mouse for border
-                e.MouseDevice.Capture(btn);
+                e.MouseDevice.Capture(ctrl);
 
-                Thickness _margin = new System.Windows.Thickness();
+                var mainWIndow = Window.GetWindow(ctrl);
 
-                var mainWIndow = Window.GetWindow(btn);
+                int tempX = Convert.ToInt32(e.GetPosition(mainWIndow).X);
+                int tempY = Convert.ToInt32(e.GetPosition(mainWIndow).Y);
 
-                int _tempX = Convert.ToInt32(e.GetPosition(mainWIndow).X);
-                int _tempY = Convert.ToInt32(e.GetPosition(mainWIndow).Y);
+                var parentContainer = ctrl.Parent as FrameworkElement;
 
-                var parentContainer = btn.Parent as FrameworkElement;
-
-                _margin = parentContainer.Margin;
+                Thickness mragin = parentContainer.Margin;
 
                 // when While moving _tempX get greater than m_MouseX relative to usercontrol 
-                if (_mouseX > _tempX)
+                if (_mouseX > tempX)
                 {
                     // add the difference of both to Left
-                    _margin.Left += (_tempX - _mouseX);
+                    mragin.Left += (tempX - _mouseX);
                     // subtract the difference of both to Left
-                    _margin.Right -= (_tempX - _mouseX);
+                    mragin.Right -= (tempX - _mouseX);
                 }
                 else
                 {
-                    _margin.Left -= (_mouseX - _tempX);
-                    _margin.Right -= (_tempX - _mouseX);
+                    mragin.Left -= (_mouseX - tempX);
+                    mragin.Right -= (tempX - _mouseX);
                 }
-                if (_mouseY > _tempY)
+                if (_mouseY > tempY)
                 {
-                    _margin.Top += (_tempY - _mouseY);
-                    _margin.Bottom -= (_tempY - _mouseY);
+                    mragin.Top += (tempY - _mouseY);
+                    mragin.Bottom -= (tempY - _mouseY);
                 }
                 else
                 {
-                    _margin.Top -= (_mouseY - _tempY);
-                    _margin.Bottom -= (_tempY - _mouseY);
+                    mragin.Top -= (_mouseY - tempY);
+                    mragin.Bottom -= (tempY - _mouseY);
                 }
 
-                parentContainer.Margin = _margin;
+                parentContainer.Margin = mragin;
 
-                _mouseX = _tempX;
-                _mouseY = _tempY;
+                _mouseX = tempX;
+                _mouseY = tempY;
             }
         }
     }

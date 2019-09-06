@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Xml.Linq;
@@ -15,11 +17,11 @@ namespace WpfApp1
             InitializeComponent();
         }
 
-        private Button[] _buttons;
+        private List<Control> _controls = new  List<Control>();
 
-        internal void AddButtons(Button[] button)
+        internal void AddControls(Control[] controls)
         {
-            _buttons = button;
+            _controls.AddRange(controls);
         }
 
         private void TbtnConfig_Click(object sender, RoutedEventArgs e)
@@ -44,20 +46,20 @@ namespace WpfApp1
 
         public string GetConfigXML()
         {
-            if (_buttons == null) return null;
+            if (_controls == null) return null;
 
             var configElement = new XElement("ConfiguredControl", new XAttribute("name", Name), new XAttribute("type", "xaml"));
 
-            foreach (var btn in _buttons)
+            foreach (var ctrl in _controls)
             {
-                var parentElement = btn.Parent as FrameworkElement;
+                var parentElement = ctrl.Parent as FrameworkElement;
               
                 if (!parentElement.AllowDrop)
                 {
                     continue; // not configured
                 }
 
-                string buttonXML = XamlWriter.Save(btn); //parent contains the margins needed in in the positioning
+                string buttonXML = XamlWriter.Save(ctrl); //parent contains the margins needed in in the positioning
 
                 configElement.Add(XElement.Parse(buttonXML));
             }
@@ -67,7 +69,7 @@ namespace WpfApp1
 
         private void editMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (_buttons == null) return;
+            if (_controls == null) return;
 
             bool editing = false;
 
@@ -87,9 +89,9 @@ namespace WpfApp1
 
         public void EditMode(bool editing)
         {
-            foreach (var btn in _buttons)
+            foreach (var ctrl in _controls)
             {
-                btn.EditMode(editing);
+                ctrl.EditMode(editing);
             }
         }
 

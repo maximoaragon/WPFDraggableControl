@@ -9,30 +9,71 @@
             <RowDefinition Height="50"  />
         </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition Width="35" />
+        </Grid.ColumnDefinitions>
+
         <StackPanel Margin="10 10" >
 
-            <local:ConfigUIButton HorizontalAlignment="Right" x:Name="panel1Config"/>
-
             <UserControl HorizontalAlignment="Left">
-                <Button Name="btn1" Content="Button A" Width="100" Height="40" Background="Aquamarine"  />
+                <Button Name="btn1" Content="Button A " Width="150" Height="40" Background="Aquamarine"  />
             </UserControl>
 
+            <Button Name="btn2" Content="Button B" Width="75" Height="40" Margin="10, 10"/>
 
-            <Grid AllowDrop="True" Cursor="Hand" Margin="10 10 " HorizontalAlignment="Left">
-                <Button Name="btn2" Content="Button B" Width="75" Height="40" />
-            </Grid>
-
-            <Grid AllowDrop="True" Width="Auto" Margin="0 0 -10 0" HorizontalAlignment="Left">
-                <Button Name="btn3" Content="Button C" Width="75"  Height="40"  local:UIConfig.Visible="False"  />
-            </Grid>
+            <StackPanel>
+                <Button Name="btn3" Content="Button C"  local:UIConfig.Visible="False"  />
+            </StackPanel>
+            
         </StackPanel>
-        
 
-        <Border Grid.Row="1" Background="SaddleBrown">
+        <StackPanel Grid.Column="1" >
+
+            <GroupBox x:Name="groupBox1" BorderThickness="0">
+                <StackPanel Orientation="Horizontal" Background="AliceBlue" Margin="10 10">
+                    <Label>Lable A</Label>
+                    <ComboBox Width="100">
+                        <ComboBoxItem>ComboBox Item #1</ComboBoxItem>
+                        <ComboBoxItem IsSelected="True">ComboBox Item #2</ComboBoxItem>
+                        <ComboBoxItem>ComboBox Item #3</ComboBoxItem>
+                    </ComboBox>
+                    <CheckBox VerticalAlignment="Center">Check Box</CheckBox>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox x:Name="groupBox2">
+                <StackPanel x:Name="stackPanel2" Orientation="Horizontal" Background="LightPink" Margin="10 10">
+                    <Label>Lable B</Label>
+                    <ComboBox Width="100">
+                        <ComboBoxItem>ComboBox Item #1</ComboBoxItem>
+                        <ComboBoxItem IsSelected="True">ComboBox Item #2</ComboBoxItem>
+                        <ComboBoxItem>ComboBox Item #3</ComboBoxItem>
+                    </ComboBox>
+                    <CheckBox VerticalAlignment="Center">Check Box</CheckBox>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox x:Name="groupBox3">
+                <StackPanel x:Name="stackPanel3" Orientation="Horizontal" Background="Goldenrod" Margin="10 10">
+                    <Label>Lable C</Label>
+                    <ComboBox Width="100">
+                        <ComboBoxItem>ComboBox Item #1</ComboBoxItem>
+                        <ComboBoxItem IsSelected="True">ComboBox Item #2</ComboBoxItem>
+                        <ComboBoxItem>ComboBox Item #3</ComboBoxItem>
+                    </ComboBox>
+                    <CheckBox VerticalAlignment="Center">Check Box</CheckBox>
+                </StackPanel>
+            </GroupBox>
+
+        </StackPanel>
+
+        <local:ConfigUIButton Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" x:Name="panel1Config"/>
+
+        <Border Grid.Row="1" Background="LightGray" Grid.ColumnSpan="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10 10">
-
-                <Button x:Name="btnSave" Content="Save"  Click="BtnSave_Click" Width="100" />
-                
+                <Button Content="Save" Click="BtnSave_Click" Width="100" />
             </StackPanel>
         </Border>
     </Grid>

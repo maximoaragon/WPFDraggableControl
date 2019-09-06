@@ -68,9 +68,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ButtonExtensions.cs" />
+    <Compile Include="DraggableControlExtensions.cs" />
     <Compile Include="UIConfig.cs" />
-    <Compile Include="CursorHelper.cs" />
     <Compile Include="ConfigUIButtn.xaml.cs">
       <DependentUpon>ConfigUIButtn.xaml</DependentUpon>
     </Compile>
